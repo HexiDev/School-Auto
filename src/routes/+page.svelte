@@ -17,6 +17,7 @@
       deviceModal.opened = false;
     },
   });
+  const BLEServices = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
   let bluetoothDevices: ScanResult[] = $state([]);
   const loadDevices = async () => {
     bluetoothDevices = [];
@@ -56,12 +57,12 @@
     <h1>Add Device</h1>
     <Fa icon={faSquarePlus} size="1.3x" />
   </button>
-  <button
+  <!-- <button
     onclick={async () => {
       await ScreenOrientation.lock({ orientation: "landscape" });
       goto("/controller");
     }}>controller</button
-  >
+  > -->
 </main>
 
 <style>

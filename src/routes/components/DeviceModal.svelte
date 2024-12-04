@@ -1,5 +1,8 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import type { ScanResult } from "@capacitor-community/bluetooth-le";
+  import { ScreenOrientation } from "@capacitor/screen-orientation";
+  import { faBluetoothB } from "@fortawesome/free-brands-svg-icons";
   import { faCross, faPlus } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
   import { cubicOut } from "svelte/easing";
@@ -61,11 +64,32 @@
               >
             </div>
           {:else}
-            <ul>
-              {#each bluetoothDevices as device}
-                <li>{device.device.deviceId}</li>
+            <!-- filter the empty device.device.localname -->
+            <div class="bluetoothDevicesContainer">
+              {#each bluetoothDevices
+                .filter((device) => !!device.device.name)
+                .sort((a, b) => (b.rssi || 0) - (a.rssi || 0)) as device}
+                <button
+                  class="unstyledButton"
+                  onclick={async () => {
+                    await ScreenOrientation.lock({ orientation: "landscape" });
+                    goto("/controller/" + device.device.deviceId);
+                  }}
+                >
+                  <div class="bluetoothDeviceContainer">
+                    <div class="bluetoothDevice">
+                      <div class="bluetoothIcon">
+                        <Fa icon={faBluetoothB} size="1.25x" />
+                      </div>
+                      <div class="bluetoothDeviceDetails">
+                        <h3>{device.device.name}</h3>
+                        <p>{device.device.deviceId}</p>
+                      </div>
+                    </div>
+                  </div>
+                </button>
               {/each}
-            </ul>
+            </div>
           {/if}
         </div>
       </div>
@@ -74,6 +98,51 @@
 {/if}
 
 <style>
+  .bluetoothDevicesContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 18rem;
+    overflow-y: auto;
+    width: 100%;
+  }
+  .bluetoothDeviceContainer {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    border-radius: 1rem;
+    background-color: rgba(0, 0, 0, 0.205);
+    width: 100%;
+  }
+  .bluetoothDevice {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    width: 100%;
+  }
+  .bluetoothIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(53, 53, 53);
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    padding: 0.5rem;
+  }
+  .bluetoothDeviceDetails {
+    flex-direction: column;
+    text-align: right;
+    /* align to right */
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .bluetoothDeviceDetails p {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+  }
+
   .topInfo {
     display: flex;
     align-items: center;

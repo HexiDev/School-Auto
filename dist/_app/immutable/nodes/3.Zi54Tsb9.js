@@ -1,0 +1,1 @@
+import{t as r,a}from"../chunks/disclose-version.BI_BLsxB.js";import"../chunks/legacy.DD9LzAr7.js";import{n as e}from"../chunks/runtime.zDXwUdKf.js";function i(t){e();var o=r("controller :)");a(t,o)}export{i as component};
