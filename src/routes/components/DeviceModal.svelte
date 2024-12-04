@@ -1,16 +1,27 @@
 <script lang="ts">
+  import type { ScanResult } from "@capacitor-community/bluetooth-le";
   import { faCross, faPlus } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
   import { cubicOut } from "svelte/easing";
   import { fade, fly } from "svelte/transition";
-
   // get the props
   let {
     opened,
     onClose,
     title,
-  }: { opened: boolean; onClose: () => void; title: string } = $props();
+    bluetoothDevices,
+  }: {
+    opened: boolean;
+    onClose: () => void;
+    title: string;
+    bluetoothDevices: ScanResult[];
+  } = $props();
   // make onclose event
+  bluetoothDevices = bluetoothDevices.filter(
+    (device, index, self) =>
+      index ===
+      self.findIndex((t) => t.device.deviceId === device.device.deviceId)
+  );
 </script>
 
 {#if opened}
@@ -33,10 +44,29 @@
           <div class="topInfo">
             <h1>{title}</h1>
             <button class="unstyled-button closeButton" onclick={onClose}>
-              <Fa icon={faPlus} rotate="45" size="2x" />
+              <Fa icon={faPlus} rotate="45" size="1.8x" />
             </button>
           </div>
-          .loading
+        </div>
+        <!-- check if bluetoothDevices length is longer then 0 -->
+        <div class="devicesList flex items-center justify-center m-3">
+          {#if bluetoothDevices.length <= 0}
+            <div
+              class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent align-[-0.125em] text-primary motion-reduce:animate-[spin_1.5s_linear_infinite]"
+              role="status"
+            >
+              <span
+                class="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]"
+                >Loading...</span
+              >
+            </div>
+          {:else}
+            <ul>
+              {#each bluetoothDevices as device}
+                <li>{device.device.deviceId}</li>
+              {/each}
+            </ul>
+          {/if}
         </div>
       </div>
     </div>
@@ -68,10 +98,10 @@
   }
   .modalContainer {
     background-color: rgb(53, 53, 53);
-    padding: 2rem;
-    border-radius: 1rem;
+    padding: 1rem;
+    border-radius: 1.5rem;
     width: 100%;
-    margin: 2rem 2.5rem;
+    margin: 0.8rem 1rem;
   }
   .overlay {
     position: fixed;

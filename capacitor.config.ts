@@ -5,6 +5,10 @@ const config: CapacitorConfig = {
   appName: "AutoControls",
   webDir: "dist",
   backgroundColor: "#000000",
+  server: {
+    url: "http://192.168.159.42:5173",
+    cleartext: true,
+  },
 };
 
 export default config;
