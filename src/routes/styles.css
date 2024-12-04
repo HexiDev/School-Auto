@@ -26,3 +26,14 @@ p {
 h1 {
   color: var(--color-text);
 }
+.unstyled-button {
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+.unstyled-button:active {
+  background: none;
+}
