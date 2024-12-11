@@ -1,13 +1,21 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
-  import type { ScanResult } from "@capacitor-community/bluetooth-le";
+  import {
+    BleClient,
+    type ScanResult,
+  } from "@capacitor-community/bluetooth-le";
   import { ScreenOrientation } from "@capacitor/screen-orientation";
   import { faBluetoothB } from "@fortawesome/free-brands-svg-icons";
-  import { faCross, faPlus } from "@fortawesome/free-solid-svg-icons";
+  import {
+    faCross,
+    faPlus,
+    faSpinner,
+  } from "@fortawesome/free-solid-svg-icons";
   import Fa from "svelte-fa";
   import { cubicOut } from "svelte/easing";
   import { fade, fly } from "svelte/transition";
   // get the props
+  type CustomResult = ScanResult & { loading: boolean };
   let {
     opened,
     onClose,
@@ -17,7 +25,7 @@
     opened: boolean;
     onClose: () => void;
     title: string;
-    bluetoothDevices: ScanResult[];
+    bluetoothDevices: CustomResult[];
   } = $props();
   // make onclose event
   bluetoothDevices = bluetoothDevices.filter(
@@ -72,14 +80,20 @@
                 <button
                   class="unstyledButton"
                   onclick={async () => {
-                    await ScreenOrientation.lock({ orientation: "landscape" });
+                    device.loading = true;
+                    await BleClient.connect(device.device.deviceId);
+                    // await ScreenOrientation.lock({ orientation: "landscape" });
                     goto("/controller/" + device.device.deviceId);
                   }}
                 >
                   <div class="bluetoothDeviceContainer">
                     <div class="bluetoothDevice">
                       <div class="bluetoothIcon">
-                        <Fa icon={faBluetoothB} size="1.25x" />
+                        {#if device.loading}
+                          <Fa icon={faSpinner} pulse />
+                        {:else}
+                          <Fa icon={faBluetoothB} size="1.25x" />
+                        {/if}
                       </div>
                       <div class="bluetoothDeviceDetails">
                         <h3>{device.device.name}</h3>

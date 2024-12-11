@@ -7,9 +7,9 @@
   import { ScreenOrientation } from "@capacitor/screen-orientation";
   import {
     BleClient,
-    numberToUUID,
     type ScanResult,
   } from "@capacitor-community/bluetooth-le";
+  type CustomResult = ScanResult & { loading: boolean };
   let deviceModal = $state({
     opened: false,
     title: "Add Device",
@@ -17,8 +17,7 @@
       deviceModal.opened = false;
     },
   });
-  const BLEServices = "4fafc201-1fb5-459e-8fcc-c5c9c331914b";
-  let bluetoothDevices: ScanResult[] = $state([]);
+  let bluetoothDevices: CustomResult[] = $state([]);
   const loadDevices = async () => {
     bluetoothDevices = [];
     await BleClient.requestLEScan({}, (result) => {
@@ -29,7 +28,7 @@
           (device) => device.device.deviceId === result.device.deviceId
         )
       ) {
-        bluetoothDevices = [...bluetoothDevices, result];
+        bluetoothDevices = [...bluetoothDevices, { ...result, loading: false }];
       }
     });
   };
