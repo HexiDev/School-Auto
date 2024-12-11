@@ -53,7 +53,7 @@
         oldRgbColors = { ...rgbColors };
         await sendBleColor(rgbColors);
       }
-    }, 80);
+    }, 70);
   });
   onDestroy(async () => {
     clearInterval(interval);
